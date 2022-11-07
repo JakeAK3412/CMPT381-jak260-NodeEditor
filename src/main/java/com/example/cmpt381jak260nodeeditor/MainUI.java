@@ -18,6 +18,10 @@ public class MainUI extends StackPane {
         InteractionModel iModel = new InteractionModel();
 
         DiagramView diagramView = new DiagramView();
+        SMModel model = new SMModel();
+
+
+        model.addSubscriber(diagramView);
 
         iModel.addSubscriber(toolPalette);
         iModel.addSubscriber(diagramView);
@@ -26,8 +30,11 @@ public class MainUI extends StackPane {
         toolPalette.setInteractionModel(iModel);
 
         diagramView.setIModel(iModel);
+        diagramView.setController(controller);
+        diagramView.setModel(model);
 
         controller.setIModel(iModel);
+        controller.setModel(model);
 
 
 

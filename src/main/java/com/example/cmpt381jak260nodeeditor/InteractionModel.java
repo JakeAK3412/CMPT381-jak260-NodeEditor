@@ -10,6 +10,8 @@ public class InteractionModel {
     public Tools selectedTool;
     public Cursor cursor;
 
+    public SMStateNode selectedNode;
+
     public InteractionModel(){
         this.subscribers = new ArrayList<>();
     }
@@ -34,6 +36,15 @@ public class InteractionModel {
         subscribers.forEach(s -> s.iModelChanged());
     }
 
+    public void setSelectedNode(SMStateNode node){
+        this.selectedNode = node;
+        notifySubscribers();
+    }
+
+    public SMStateNode getSelectedNode(){
+        return this.selectedNode;
+    }
+
     public void setCursor(Cursor cursor){
         this.cursor = cursor;
         //notifySubscribers();
@@ -54,6 +65,11 @@ public class InteractionModel {
 
     public void addSubscriber(IModelListener sub) { // for version 2
         subscribers.add(sub);
+    }
+
+    public void unselectNode(){
+        this.selectedNode = null;
+        notifySubscribers();
     }
 
 

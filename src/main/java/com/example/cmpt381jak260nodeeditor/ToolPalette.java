@@ -1,10 +1,14 @@
 package com.example.cmpt381jak260nodeeditor;
 
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+
+//import static jdk.xml.internal.SecuritySupport.getClassLoader;
 
 public class ToolPalette extends StackPane implements IModelListener {
 
@@ -17,9 +21,17 @@ public class ToolPalette extends StackPane implements IModelListener {
 
         VBox vbox = new VBox();
 
-        ModeButton cursorButton = new ModeButton(Tools.CURSOR);
-        ModeButton moveButton = new ModeButton(Tools.MOVE);
-        ModeButton linkButton = new ModeButton(Tools.LINK);
+
+
+
+
+
+        ModeButton cursorButton = new ModeButton(Tools.CURSOR, "src/main/java/com/example/cmpt381jak260nodeeditor/cursor.png");
+
+        ModeButton moveButton = new ModeButton(Tools.MOVE, "src/main/java/com/example/cmpt381jak260nodeeditor/crosshair.png");
+
+        ModeButton linkButton = new ModeButton(Tools.LINK, "src/main/java/com/example/cmpt381jak260nodeeditor/linktool.png");
+
         this.tools = new ArrayList<>();
 
         this.tools.add(cursorButton);
