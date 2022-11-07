@@ -20,9 +20,12 @@ public class MainUI extends StackPane {
         DiagramView diagramView = new DiagramView();
 
         iModel.addSubscriber(toolPalette);
+        iModel.addSubscriber(diagramView);
 
         toolPalette.setController(controller);
         toolPalette.setInteractionModel(iModel);
+
+        diagramView.setIModel(iModel);
 
         controller.setIModel(iModel);
 
@@ -32,6 +35,8 @@ public class MainUI extends StackPane {
         HBox hbox = new HBox(toolPalette, diagramView);
 
         this.getChildren().addAll(hbox);
+
+        toolPalette.init();
 
 
 
