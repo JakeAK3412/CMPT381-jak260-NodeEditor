@@ -1,6 +1,6 @@
 package com.example.cmpt381jak260nodeeditor;
 
-public class SMStateNode {
+public class SMStateNode extends SMItem{
 
     double x, y;
 
@@ -21,6 +21,7 @@ public class SMStateNode {
     }
 
     public void move(double dx, double dy){
+
         x+= dx;
         y+= dy;
 
