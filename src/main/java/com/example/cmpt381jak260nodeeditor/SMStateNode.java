@@ -4,9 +4,12 @@ public class SMStateNode extends SMItem{
 
     double x, y;
 
+    public boolean isTransition;
+
     public SMStateNode(double x, double y){
         this.x = x;
         this.y = y;
+        this.isTransition = false;
     }
 
     public boolean contains(double cx, double cy){
@@ -25,5 +28,10 @@ public class SMStateNode extends SMItem{
         x+= dx;
         y+= dy;
 
+    }
+
+    @Override
+    public boolean isTransition(){
+        return this.isTransition;
     }
 }

@@ -53,44 +53,62 @@ public class DiagramView extends StackPane implements IModelListener, SMModelLis
         //Now we reset the graphics context's transform so it doesn't mess up future drawings
         gc.setTransform(new Affine(Transform.translate(0, 0)));
 
-        //drawShapes(gc);
-/*
-        int firstX = 90;
-        int secondX = 190;
-        int thirdX = 10;
 
-        int firstY =30;
-        int secondY =170;
-        int thirdY =170;
-
-        gc.setFill(Color.GREEN);
-        gc.setStroke(Color.BLUE);
-        gc.fillPolygon(new double[]{firstX, secondX,thirdX},
-                new double[]{firstY, secondY, thirdY}, 3);
-
-        gc.strokePolygon(new double[]{firstX, secondX,thirdX},
-                new double[]{firstY, secondY, thirdY}, 3);
-
-        gc.strokeLine(x1, y1, x2, y2);
-
-
-        gc.setFill(Color.BLACK);
-        double dx = x2-x1;
-        double dy = y2-y1;
-
-        double angle = Math.atan2(dy, dx);
-        double length = Math.sqrt(dx*dx + dy*dy);
-
-        gc.strokeLine(0, 0, length, 0);
-
-        gc.fillPolygon(new double[]{length, length - 2, length-2, length, length}, new double[]{0, length, length}, 3);
-        gc.strokePolygon(new double[]{length, length - 2, length-2, length, length}, new double[]{0, length, length}, 3);
-*/
 
     }
 
-    private void drawTransition(GraphicsContext gc, double x1, double y1, double x2, double y2){
-        drawArrow(gc, x1, y1, x2, y2);
+    /**
+     * This draws the link with the transition node and two arrows. The general idea is
+     * to have each arrow roughly one third of the distance, and the node the rest (node will probably be a fixed distance
+     * @param gc
+
+     */
+    private void drawTransition(GraphicsContext gc, SMTransitionLink link, double[] coords, boolean isSelected){
+
+
+        //First arrow
+        drawArrow(gc, coords[0], coords[1], link.x, link.y);
+
+        //Second arrow
+        drawArrow(gc, link.x, link.y, coords[2], coords[3]);
+
+
+        gc.setStroke(Color.BLACK);
+        //If it's selected
+        if(isSelected){
+            gc.setStroke(Color.RED);
+        }
+
+        //Node:
+        gc.setFill(Color.WHITESMOKE);
+        gc.fillRect(link.x, link.y-60, 120, 120);
+
+
+        gc.setFill(Color.BLACK);
+        gc.fillText(" -Event:\n No Event\n -Context:\n No Context\n Side Effects:\n No Side Effects", link.x, link.y-40);
+        //gc.setStroke(Color.BLACK);
+
+
+        gc.strokeRect(link.x, link.y-60, 120, 120);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Divide the rise and run by 3 and then do pythagoras
+
+
     }
 
     private void drawLink(){
@@ -102,7 +120,15 @@ public class DiagramView extends StackPane implements IModelListener, SMModelLis
             if(l.isFinal){
                 //If it's a final one and we need to handle moving nodes it's connected to
                 double[] coords = this.model.bestLink(l.first, l.second);
-                drawTransition(gc, coords[0], coords[1], coords[2], coords[3]);
+                //Check if the transition node is selected:
+                if(l.equals(this.iModel.getSelectedNode())) {
+
+                    drawTransition(gc, l, coords, true);
+                }
+                else{
+                    drawTransition(gc, l, coords, false);
+
+                }
 
 
             }

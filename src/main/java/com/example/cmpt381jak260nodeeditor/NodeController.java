@@ -39,7 +39,7 @@ public class NodeController {
             switch (currentState) {
                 case READY -> {
                     if (this.model.hitNode(event.getX(), event.getY())) {
-
+                        System.out.println("Yes");
                         this.iModel.setSelectedNode(this.model.whichNode(event.getX(), event.getY()));
                         this.prevX = event.getX();
                         this.prevY = event.getY();
@@ -55,9 +55,9 @@ public class NodeController {
         else if(this.iModel.getSelectedTool() == Tools.LINK){
 
             switch (currentState) {
-                case READY -> {
-                    if (this.model.hitNode(event.getX(), event.getY())) {
-                        this.prevNode = this.model.whichNode(event.getX(), event.getY());
+                case READY -> {//If it's a hit and it's not a transition node
+                    if (this.model.hitNode(event.getX(), event.getY()) && !(this.model.whichNode(event.getX(), event.getY()).isTransition())){
+                        this.prevNode = (SMStateNode) this.model.whichNode(event.getX(), event.getY());
                         this.iModel.setSelectedNode(this.model.whichNode(event.getX(), event.getY()));
                         this.prevX = event.getX();
                         this.prevY = event.getY();
@@ -87,7 +87,7 @@ public class NodeController {
                     dY = event.getY() - prevY;
                     prevX = event.getX();
                     prevY = event.getY();
-                    model.moveNode(iModel.getSelectedNode(), dX, dY);
+                    model.moveNode( iModel.getSelectedNode(), dX, dY);
 
                 }
             }
@@ -141,11 +141,11 @@ public class NodeController {
                         this.model.removeLink(this.prevLink);
 
                         //Here basically we draw the nice-looking final link that just goes border to border
-                        double[] coords = this.model.bestLink(this.prevNode, this.model.whichNode(event.getX(), event.getY()));
+                        double[] coords = this.model.bestLink(this.prevNode, (SMStateNode) this.model.whichNode(event.getX(), event.getY()));
 
                         this.prevLink = model.addLink(coords[0], coords[1], coords[2], coords[3]);
                        //Set this link's flag to true and the first and second nodes to the right ones
-                        this.prevLink.second = this.model.whichNode(event.getX(), event.getY());
+                        this.prevLink.second = (SMStateNode) this.model.whichNode(event.getX(), event.getY());
                         this.prevLink.first = this.prevNode;
 
                         //Made a method that notifies subscribers so the arrow is drawn on the final

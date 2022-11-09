@@ -56,12 +56,22 @@ public class SMModel {
         for(SMStateNode n: this.nodes){
             if(n.contains(x, y)) return true;
         }
+
+        //Also check if we hit a transition node:
+        for(SMTransitionLink l: this.links){
+            System.out.println("checked a link");
+            if(l.contains(x, y)) return true;
+        }
         return false;
     }
 
-    public SMStateNode whichNode(double x, double y){
-        for(SMStateNode n: this.nodes){
+    public SMItem whichNode(double x, double y){
+        for(SMItem n: this.nodes){
             if(n.contains(x, y)) return n;
+        }
+        //Check if it's a transition node too:
+        for(SMItem l: this.links){
+            if(l.contains(x, y)) return l;
         }
         return null;
     }
@@ -109,10 +119,40 @@ public class SMModel {
 
     public void makeFinalLink(SMTransitionLink link){
         link.isFinal = true;
+
+        double[] coords = this.bestLink(link.first, link.second);
+        System.out.println(coords[0]);
+
+        //Set the coords of the transition node, doing some trig:
+
+
+        double distX = link.endX-link.startX;
+        double distY = link.endY-link.startY;
+        //Get the length
+        //System.out.println("\nPoint 1: " + x1  +", " + y1 + "\nPoint 2: " + x2 + ", " + y2);
+        double length = Math.sqrt(distX * distX  + distY * distY);
+        //System.out.println(length);
+        //Get the angle
+        double angle = Math.atan2(distY, distX);
+        //System.out.println("\nAngle: " + angle);
+        //Figuring out triangular stuff for the first link - pointing to the transition node
+        double hypotenuse1 = length/3.0;
+        double opposite1 = Math.sin(angle) * hypotenuse1;
+        double adjacent1 = Math.cos(angle)* hypotenuse1;
+
+        //this.nodes.add(link);
+
+        //Now we set it:
+        link.x = coords[0] + adjacent1;
+        link.y = coords[1] + opposite1;
+
+        System.out.println("\nlink.x: " + link.x + "\nlink.y: " + link.y);
+
+
         notifySubscribers();
     }
 
-    public void moveNode(SMStateNode node, double dx, double dy){
+    public void moveNode(SMItem node, double dx, double dy){
 
         node.move(dx, dy);
         notifySubscribers();
