@@ -70,7 +70,7 @@ public class DiagramView extends StackPane implements IModelListener, SMModelLis
         drawArrow(gc, coords[0], coords[1], link.x, link.y);
 
         //Second arrow
-        drawArrow(gc, link.x, link.y, coords[2], coords[3]);
+        drawArrow(gc, link.x+120, link.y, coords[2], coords[3]);
 
 
         gc.setStroke(Color.BLACK);
@@ -85,29 +85,11 @@ public class DiagramView extends StackPane implements IModelListener, SMModelLis
 
 
         gc.setFill(Color.BLACK);
-        gc.fillText(" -Event:\n No Event\n -Context:\n No Context\n Side Effects:\n No Side Effects", link.x, link.y-40);
+        gc.fillText(" -Event:\n "+link.getEvent() + "\n -Context:\n " + link.getContext() + "\n -Side Effects:\n " + link.getSideEffects(), link.x, link.y-40);
         //gc.setStroke(Color.BLACK);
 
 
         gc.strokeRect(link.x, link.y-60, 120, 120);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //Divide the rise and run by 3 and then do pythagoras
-
 
     }
 
@@ -152,7 +134,7 @@ public class DiagramView extends StackPane implements IModelListener, SMModelLis
 
 
                 gc.setFill(Color.RED);
-                gc.fillText("Default", n.x-20, n.y);
+                gc.fillText(n.getName(), n.x-20, n.y);
 
 
                 gc.setStroke(Color.RED);

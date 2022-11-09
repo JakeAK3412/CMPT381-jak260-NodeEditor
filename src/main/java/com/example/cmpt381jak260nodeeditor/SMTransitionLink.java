@@ -9,6 +9,32 @@ public class SMTransitionLink extends SMItem{
 
     SMStateNode first, second;
 
+    public String event, sideEffects, context;
+
+    public String getEvent() {
+        return event;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public String getSideEffects() {
+        return sideEffects;
+    }
+
+    public void setSideEffects(String sideEffects) {
+        this.sideEffects = sideEffects;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
+    }
+
     //The point on the transition node where the first arrow points to -
     //From there we can calculate the other side too
     double x, y;
@@ -22,6 +48,10 @@ public class SMTransitionLink extends SMItem{
         this.endY = endY;
         this.isFinal = false;
         this.isTransition = true;
+
+        this.event = "No Event";
+        this.context = "No Context";
+        this.sideEffects = "No Side Effects";
     }
 
     @Override

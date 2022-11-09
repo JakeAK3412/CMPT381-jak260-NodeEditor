@@ -6,10 +6,21 @@ public class SMStateNode extends SMItem{
 
     public boolean isTransition;
 
+    public String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public SMStateNode(double x, double y){
         this.x = x;
         this.y = y;
         this.isTransition = false;
+        this.name = "Default";
     }
 
     public boolean contains(double cx, double cy){

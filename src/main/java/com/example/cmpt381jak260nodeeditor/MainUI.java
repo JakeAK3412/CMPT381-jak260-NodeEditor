@@ -3,22 +3,27 @@ package com.example.cmpt381jak260nodeeditor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 public class MainUI extends StackPane {
 
 
 
-    public MainUI(){
+    public MainUI(Stage stage){
 
 
         //Label label = new Label("Node Editor");
-        NodeController controller = new NodeController();
+        NodeController controller = new NodeController(stage);
         ToolPalette toolPalette = new ToolPalette();
 
         InteractionModel iModel = new InteractionModel();
 
         DiagramView diagramView = new DiagramView();
         SMModel model = new SMModel();
+
+        LinkPropertiesView linkView = new LinkPropertiesView();
+
+        NodePropertiesView nodeView = new NodePropertiesView();
 
 
         model.addSubscriber(diagramView);
@@ -39,7 +44,7 @@ public class MainUI extends StackPane {
 
 
 
-        HBox hbox = new HBox(toolPalette, diagramView);
+        HBox hbox = new HBox(toolPalette, diagramView, nodeView);
 
         this.getChildren().addAll(hbox);
 

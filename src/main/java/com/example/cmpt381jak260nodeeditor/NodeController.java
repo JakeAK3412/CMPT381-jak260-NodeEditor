@@ -1,6 +1,8 @@
 package com.example.cmpt381jak260nodeeditor;
 
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 public class NodeController {
 
@@ -18,7 +20,12 @@ public class NodeController {
     enum State {READY,PREPARE_CREATE, DRAGGING}
     State currentState = State.READY;
 
-    public NodeController(){
+    //For changing views
+    Stage stage;
+
+    public NodeController(Stage stage){
+
+        this.stage = stage;
 
     }
 
@@ -39,11 +46,22 @@ public class NodeController {
             switch (currentState) {
                 case READY -> {
                     if (this.model.hitNode(event.getX(), event.getY())) {
-                        System.out.println("Yes");
+                        //System.out.println("Yes");
                         this.iModel.setSelectedNode(this.model.whichNode(event.getX(), event.getY()));
                         this.prevX = event.getX();
                         this.prevY = event.getY();
                         currentState = State.DRAGGING;
+
+                        //See which view we have to show:
+                        if(this.model.whichNode(event.getX(), event.getY()).isTransition()){
+
+                            this.stage.setScene(new Scene(new LinkPropertiesView()));
+                        }
+                        else{
+                            this.stage.setScene(new Scene(new NodePropertiesView()));
+                        }
+
+
                     } else {
 
                         this.model.addNode(event.getX(), event.getY());
