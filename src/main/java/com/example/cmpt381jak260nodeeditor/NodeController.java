@@ -1,5 +1,6 @@
 package com.example.cmpt381jak260nodeeditor;
 
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -17,16 +18,67 @@ public class NodeController {
 
     SMTransitionLink prevLink;
 
+    public void handleDelete() {
+        SMItem node = this.iModel.getSelectedNode();
+
+        //System.out.println("Get Deleted");
+
+        //Two different cases, if it's a transition node or a state node
+        if(node != null){
+            if(node.isTransition()){
+                this.model.removeLink((SMTransitionLink) node);
+            }
+            else{
+                this.model.removeNode((SMStateNode) node);
+            }
+        }
+    }
+
+
     enum State {READY,PREPARE_CREATE, DRAGGING}
     State currentState = State.READY;
 
     //For changing views
-    Stage stage;
+    //Stage stage;
+    NodePropertiesView nodeView;
+    LinkPropertiesView linkView;
 
-    public NodeController(Stage stage){
+    public NodeController(LinkPropertiesView linkView, NodePropertiesView nodeView){
 
-        this.stage = stage;
+        //this.stage = stage;
 
+        this.nodeView = nodeView;
+        this.linkView = linkView;
+    }
+
+    public void handleUpdate(ActionEvent actionEvent) {
+
+            SMTransitionLink node = (SMTransitionLink) iModel.getSelectedNode();
+
+            if(node!=null){
+
+
+                model.setEventName(linkView.eventInsert.getText(), node);
+                model.setSideEffectName(linkView.seInsert.getText(), node);
+                model.setContextName(linkView.contextInsert.getText(), node);
+
+                linkView.eventInsert.clear();
+                linkView.seInsert.clear();
+                linkView.contextInsert.clear();
+            }
+
+    }
+
+    //If the enter key is pressed
+    public void handleKey() {
+
+        SMStateNode node = ((SMStateNode) iModel.getSelectedNode());
+
+        if(node != null) {
+            model.setStateName(this.nodeView.stateInsert.getText(), node);
+            this.nodeView.stateInsert.clear();
+
+        }
     }
 
     public void setIModel(InteractionModel iModel){
@@ -45,26 +97,34 @@ public class NodeController {
             //System.out.println("Cursor tool pressed");
             switch (currentState) {
                 case READY -> {
-                    if (this.model.hitNode(event.getX(), event.getY())) {
-                        //System.out.println("Yes");
-                        this.iModel.setSelectedNode(this.model.whichNode(event.getX(), event.getY()));
-                        this.prevX = event.getX();
-                        this.prevY = event.getY();
+                    if (this.model.hitNode(event.getX() + iModel.scrollX, event.getY()+ iModel.scrollY)) {
+                        System.out.println("Yes");
+                        this.iModel.setSelectedNode(this.model.whichNode(event.getX()+ iModel.scrollX, event.getY() + iModel.scrollY));
+                        this.prevX = event.getX() + iModel.scrollX;
+                        this.prevY = event.getY() + iModel.scrollY;
                         currentState = State.DRAGGING;
 
                         //See which view we have to show:
-                        if(this.model.whichNode(event.getX(), event.getY()).isTransition()){
+                        if(this.model.whichNode(event.getX() + iModel.scrollX, event.getY()+ iModel.scrollY).isTransition()){
 
-                            this.stage.setScene(new Scene(new LinkPropertiesView()));
+                            this.nodeView.setManaged(false);
+                            this.nodeView.setVisible(false);
+
+                            this.linkView.setManaged(true);
+                            this.linkView.setVisible(true);
                         }
                         else{
-                            this.stage.setScene(new Scene(new NodePropertiesView()));
+                            this.nodeView.setManaged(true);
+                            this.nodeView.setVisible(true);
+
+                            this.linkView.setManaged(false);
+                            this.linkView.setVisible(false);
                         }
 
 
                     } else {
 
-                        this.model.addNode(event.getX(), event.getY());
+                        this.model.addNode(event.getX() + iModel.scrollX, event.getY() + iModel.scrollY);
 
                     }
                 }
@@ -74,13 +134,14 @@ public class NodeController {
 
             switch (currentState) {
                 case READY -> {//If it's a hit and it's not a transition node
-                    if (this.model.hitNode(event.getX(), event.getY()) && !(this.model.whichNode(event.getX(), event.getY()).isTransition())){
-                        this.prevNode = (SMStateNode) this.model.whichNode(event.getX(), event.getY());
-                        this.iModel.setSelectedNode(this.model.whichNode(event.getX(), event.getY()));
-                        this.prevX = event.getX();
-                        this.prevY = event.getY();
+                    if (this.model.hitNode(event.getX() + iModel.scrollX, event.getY()+ iModel.scrollY)
+                            && !(this.model.whichNode(event.getX()+ iModel.scrollX, event.getY()+ iModel.scrollY).isTransition())){
+                        this.prevNode = (SMStateNode) this.model.whichNode(event.getX()+ iModel.scrollX, event.getY()+ iModel.scrollY);
+                        this.iModel.setSelectedNode(this.model.whichNode(event.getX()+ iModel.scrollX, event.getY()+ iModel.scrollY));
+                        this.prevX = event.getX()+ iModel.scrollX;
+                        this.prevY = event.getY()+ iModel.scrollY;
                         //this.model.removeLink(this.prevLink);
-                        this.prevLink = this.model.addLink(this.prevX, this.prevY, event.getX(), event.getY());
+                        this.prevLink = this.model.addLink(this.prevX, this.prevY, event.getX()+ iModel.scrollX, event.getY()+ iModel.scrollY);
 
                         currentState = State.DRAGGING;
 
@@ -90,7 +151,14 @@ public class NodeController {
 
         }
         else{
+            //Now we move the world
             System.out.println("Move tool pressed");
+            switch (currentState){
+                case READY -> {
+                    this.prevX = event.getX()+ iModel.scrollX;
+                    this.prevY = event.getY()+ iModel.scrollY;
+                }
+            }
         }
     }
 
@@ -101,10 +169,10 @@ public class NodeController {
                     currentState = State.READY;
                 }
                 case DRAGGING -> {
-                    dX = event.getX() - prevX;
-                    dY = event.getY() - prevY;
-                    prevX = event.getX();
-                    prevY = event.getY();
+                    dX = event.getX() + iModel.scrollX - prevX;
+                    dY = event.getY() + iModel.scrollY - prevY;
+                    prevX = event.getX() + iModel.scrollX;
+                    prevY = event.getY() + iModel.scrollY;
                     model.moveNode( iModel.getSelectedNode(), dX, dY);
 
                 }
@@ -122,12 +190,37 @@ public class NodeController {
                     prevX = event.getX();
                     prevY = event.getY();*/
                     this.model.removeLink(this.prevLink);
-                    this.prevLink = this.model.addLink(this.prevX, this.prevY, event.getX(), event.getY());
+                    this.prevLink = this.model.addLink(this.prevX- iModel.scrollX, this.prevY- iModel.scrollY,
+                            event.getX(), event.getY());
 
 
                 }
             }
 
+        }
+        else{
+            //System.out.println("Got to pan switch");
+            switch(currentState){
+
+                case PREPARE_CREATE -> {
+                    //System.out.println("prepare create in pan switch");
+                    currentState = State.READY;
+                }
+                case DRAGGING -> {
+
+                }
+
+                case READY -> {
+                    //Pan the screen by the amount of space we've moved:
+                    this.iModel.panRegion(event.getX()-prevX, event.getY()-prevY);
+
+                    System.out.println("\nprevX: " + prevX + "\n" +
+                            "prevY: " + prevY + "\neventX: " + event.getX() +
+                            "\neventY: " + event.getY());
+                    prevX = event.getX();
+                    prevY = event.getY();
+                }
+            }
         }
     }
 
@@ -153,17 +246,22 @@ public class NodeController {
                 case DRAGGING -> {
                     //iModel.unselectNode();
                     //System.out.println("got to pc");
-                    if(this.model.hitNode(event.getX(), event.getY())) {
+                    if(this.model.hitNode(event.getX() + iModel.scrollX, event.getY()+ iModel.scrollY)) {
                         //System.out.println("hit");
                         //model.addLink(event.getX(), event.getY());
                         this.model.removeLink(this.prevLink);
 
+                        double[] coords;
                         //Here basically we draw the nice-looking final link that just goes border to border
-                        double[] coords = this.model.bestLink(this.prevNode, (SMStateNode) this.model.whichNode(event.getX(), event.getY()));
+                        if(this.model.whichNode(event.getX()+
+                                iModel.scrollX, event.getY()+ iModel.scrollY) instanceof SMStateNode) {
+                             coords = this.model.bestLink(this.prevNode, (SMStateNode) this.model.whichNode(event.getX() +
+                                    iModel.scrollX, event.getY() + iModel.scrollY));
+
 
                         this.prevLink = model.addLink(coords[0], coords[1], coords[2], coords[3]);
                        //Set this link's flag to true and the first and second nodes to the right ones
-                        this.prevLink.second = (SMStateNode) this.model.whichNode(event.getX(), event.getY());
+                        this.prevLink.second = (SMStateNode) this.model.whichNode(event.getX()+ iModel.scrollX, event.getY()+ iModel.scrollY);
                         this.prevLink.first = this.prevNode;
 
                         //Made a method that notifies subscribers so the arrow is drawn on the final
@@ -172,7 +270,7 @@ public class NodeController {
 
                         currentState = State.READY;
                         this.prevLink = null;
-
+                    }
                     }
                     else{
                         //System.out.println("missed");

@@ -14,7 +14,7 @@ public class EditorApp extends Application {
         MainUI mainui = new MainUI(stage);
         Scene scene = new Scene(mainui);
 
-        stage.setTitle("Hello!");
+        stage.setTitle("State Machine Editor");
         stage.setScene(scene);
         stage.show();
     }

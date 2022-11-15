@@ -6,12 +6,15 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 public class NodePropertiesView extends StackPane {
+
+    TextField stateInsert;
 
     public NodePropertiesView(){
         //working our way top to bottom of the template in the assignment description:
@@ -27,7 +30,7 @@ public class NodePropertiesView extends StackPane {
 
         Label stateLabel = new Label("State Name:");
 
-        TextField stateInsert = new TextField();
+        stateInsert = new TextField();
         stateInsert.setPromptText("Default");
 
 
@@ -35,8 +38,20 @@ public class NodePropertiesView extends StackPane {
         vbox.getChildren().addAll(labelBox, stateLabel, stateInsert);
 
         vbox.setPadding(new Insets(0, 10, 0, 10));
-        this.setPrefWidth(250);
+        //this.setPrefWidth(250);
+        this.setMaxWidth(250);
+        this.setMinWidth(250);
 
         this.getChildren().addAll(vbox);
+    }
+
+    public void setController(NodeController controller){
+
+        this.stateInsert.setOnKeyPressed( event -> {
+            if( event.getCode() == KeyCode.ENTER ) {
+                controller.handleKey();
+            }
+        } );
+
     }
 }

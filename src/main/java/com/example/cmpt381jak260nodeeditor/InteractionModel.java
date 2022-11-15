@@ -12,8 +12,88 @@ public class InteractionModel {
 
     public SMItem selectedNode;
 
+    public double worldWidth, worldHeight;
+    public double viewWidth, viewHeight;
+
+    public double scrollX, scrollY;
+
     public InteractionModel(){
+
         this.subscribers = new ArrayList<>();
+        this.scrollX = 0;
+        this.scrollY = 0;
+    }
+
+
+
+
+
+    public void panRegion(double dx, double dy){
+        //Set x
+        this.scrollX -= dx;
+        //Check if it's out of bounds:
+        if (scrollX < 0) scrollX = 0;
+        if (scrollX > worldWidth - viewWidth) scrollX = worldWidth - viewWidth;
+
+        //Set y:
+        this.scrollY -= dy;
+        //Check if out of bounds again:
+        if(scrollY <0) scrollY = 0;
+        if(scrollY>worldHeight-viewHeight)scrollY = worldHeight-viewHeight;
+
+        System.out.println("\nScrollX: " + scrollX + "\nScrollY: "+ scrollY);
+
+        notifySubscribers();
+
+
+    }
+
+    public double getWorldWidth() {
+        return worldWidth;
+    }
+
+    public void setWorldWidth(double worldWidth) {
+        this.worldWidth = worldWidth;
+    }
+
+    public double getWorldHeight() {
+        return worldHeight;
+    }
+
+    public void setWorldHeight(double worldHeight) {
+        this.worldHeight = worldHeight;
+    }
+
+    public double getViewWidth() {
+        return viewWidth;
+    }
+
+    public void setViewWidth(double viewWidth) {
+        this.viewWidth = viewWidth;
+    }
+
+    public double getViewHeight() {
+        return viewHeight;
+    }
+
+    public void setViewHeight(double viewHeight) {
+        this.viewHeight = viewHeight;
+    }
+
+    public double getScrollX() {
+        return scrollX;
+    }
+
+    public void setScrollX(double scrollX) {
+        this.scrollX = scrollX;
+    }
+
+    public double getScrollY() {
+        return scrollY;
+    }
+
+    public void setScrollY(double scrollY) {
+        this.scrollY = scrollY;
     }
 
     public void setTool(Tools tool){
@@ -26,7 +106,7 @@ public class InteractionModel {
         }
 
         else{
-            this.setCursor(Cursor.HAND);
+            this.setCursor(Cursor.MOVE);
         }
 
         notifySubscribers();

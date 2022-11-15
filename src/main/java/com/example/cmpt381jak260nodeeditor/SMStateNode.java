@@ -20,7 +20,7 @@ public class SMStateNode extends SMItem{
         this.x = x;
         this.y = y;
         this.isTransition = false;
-        this.name = "Default";
+        this.name = "      Default";
     }
 
     public boolean contains(double cx, double cy){

@@ -21,16 +21,11 @@ public class ToolPalette extends StackPane implements IModelListener {
 
         VBox vbox = new VBox();
 
-
-
-
-
-
         ModeButton cursorButton = new ModeButton(Tools.CURSOR, "src/main/java/com/example/cmpt381jak260nodeeditor/cursor.png");
 
-        ModeButton moveButton = new ModeButton(Tools.MOVE, "src/main/java/com/example/cmpt381jak260nodeeditor/crosshair.png");
+        ModeButton moveButton = new ModeButton(Tools.MOVE, "src/main/java/com/example/cmpt381jak260nodeeditor/crosshairIcon.png");
 
-        ModeButton linkButton = new ModeButton(Tools.LINK, "src/main/java/com/example/cmpt381jak260nodeeditor/linktool.png");
+        ModeButton linkButton = new ModeButton(Tools.LINK, "src/main/java/com/example/cmpt381jak260nodeeditor/linktoolIcon.png");
 
         this.tools = new ArrayList<>();
 
@@ -40,11 +35,18 @@ public class ToolPalette extends StackPane implements IModelListener {
 
         vbox.getChildren().addAll(cursorButton, moveButton, linkButton);
 
-        vbox.setSpacing(10);
+        this.tools.forEach(b->{
+            b.setPrefSize(65, 65);
+        });
 
-        vbox.setPadding(new Insets(0, 5, 0, 5));
+        vbox.setSpacing(20);
 
-        this.setPrefWidth(60);
+        vbox.setPadding(new Insets(0, 10, 0, 10));
+
+        //this.setPrefWidth(80);
+        this.setMaxWidth(90);
+        this.setMinWidth(90);
+        //For testing: this.setStyle("-fx-background-color: yellow");
 
         this.getChildren().addAll(vbox);
 
@@ -70,7 +72,7 @@ public class ToolPalette extends StackPane implements IModelListener {
 
             this.tools.forEach(t -> {
                 t.unselect();
-                if (t.tool == iModel.getSelectedTool()) t.select();
+                if (t.tool.equals(iModel.getSelectedTool())) t.select();
             });
 
 

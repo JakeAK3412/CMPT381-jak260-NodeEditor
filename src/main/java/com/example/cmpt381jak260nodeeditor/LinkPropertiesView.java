@@ -1,6 +1,10 @@
 package com.example.cmpt381jak260nodeeditor;
 
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -15,6 +19,10 @@ import javafx.scene.text.Font;
 public class LinkPropertiesView extends StackPane {
 
 
+    TextField eventInsert;
+    TextField contextInsert;
+    TextField seInsert;
+    Button updateButton;
     public LinkPropertiesView(){
 
         //working our way top to bottom of the template in the assignment description:
@@ -30,22 +38,27 @@ public class LinkPropertiesView extends StackPane {
 
         Label eventLabel = new Label("Event:");
 
-        TextField eventInsert = new TextField();
+        this.eventInsert = new TextField();
         eventInsert.setPromptText("No Event");
 
-        Label contextLabel = new Label("Context:");
-        TextField contextInsert = new TextField();
-        contextInsert.setPromptText("No Context");
-        contextInsert.setPrefHeight(100);
 
+
+        Label contextLabel = new Label("Context:");
+        this.contextInsert = new TextField();
+        contextInsert.setPromptText("No Context");
+
+        contextInsert.setPrefHeight(150);
+        contextInsert.setAlignment(Pos.TOP_LEFT);
 
         Label seLabel = new Label("Side Effects:");
-        TextField seInsert = new TextField();
+        this.seInsert = new TextField();
         seInsert.setPromptText("No Side Effects");
+        seInsert.setPrefHeight(150);
+        seInsert.setAlignment(Pos.TOP_LEFT);
 
-        seInsert.setPrefHeight(100);
 
-        Button updateButton = new Button("Update");
+
+        this.updateButton = new Button("Update");
 
 
 
@@ -55,9 +68,18 @@ public class LinkPropertiesView extends StackPane {
                 contextLabel, contextInsert, seLabel, seInsert, updateButton);
 
         vbox.setPadding(new Insets(0, 10, 0, 10));
-        this.setPrefWidth(250);
+        //this.setPrefWidth(250);
+        this.setMaxWidth(250);
+        this.setMinWidth(250);
 
         this.getChildren().addAll(vbox);
+    }
+
+
+    public void setController(NodeController controller){
+
+        this.updateButton.setOnAction(controller::handleUpdate);
+
     }
 
 }
